@@ -1,5 +1,7 @@
 """Orchestrates geocode -> route -> HOS for the plan endpoint."""
 
+import math
+
 from trips.services import geocode_service, hos_engine, route_service
 
 
@@ -75,9 +77,23 @@ def plan_trip(payload: dict):
     try:
         cycle = float(cycle_raw)
     except (TypeError, ValueError):
-        raise ValueError("currentCycleHoursUsed must be a number 0-70.")
-    if not (0 <= cycle <= 70):
-        raise ValueError("currentCycleHoursUsed must be between 0 and 70.")
+        raise ValueError(
+            "Violation of HOS rules: currentCycleHoursUsed must be a number 0-70."
+        )
+    if not math.isfinite(cycle):
+        raise ValueError(
+            "Violation of HOS rules: currentCycleHoursUsed must be a number 0-70."
+        )
+    if cycle < 0:
+        raise ValueError(
+            "Violation of HOS rules: currentCycleHoursUsed cannot be negative "
+            f"(got {cycle}). Cycle hours must be between 0 and 70."
+        )
+    if cycle > 70:
+        raise ValueError(
+            "Violation of HOS rules: currentCycleHoursUsed must be between 0 and 70 "
+            f"(got {cycle})."
+        )
 
     origin = _as_location(current, "currentLocation")
     pickup = _as_location(pickup_raw, "pickupLocation")
@@ -87,6 +103,13 @@ def plan_trip(payload: dict):
     stops, logs, totals = hos_engine.calculate_itinerary_and_logs(
         origin, pickup, dropoff, cycle, route_info
     )
+    if totals.get("remainingCycleHours", 0) < 0:
+        raise ValueError(
+            "Violation of HOS rules: trip would exceed the 70-hour / 8-day cycle "
+            f"(starts at {cycle:.1f} hrs, needs {totals.get('cycleHoursUsed', cycle):.1f} hrs, "
+            f"remaining {totals['remainingCycleHours']:.1f} hrs). "
+            "A 34-hour restart is required before this trip."
+        )
     return {
         "origin": origin,
         "pickup": pickup,

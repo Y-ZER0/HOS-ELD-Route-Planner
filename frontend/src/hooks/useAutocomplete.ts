@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchAutocomplete, type LocationSuggestion } from "@/api/client";
 
 export const AUTOCOMPLETE_MIN_CHARS = 3;
@@ -24,7 +24,12 @@ export function useAutocomplete(query: string, limit = 5) {
     enabled,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    retry: 1,
+    // Typeahead must fail fast: never retry, never refetch on focus,
+    // and keep the previous list visible while the next query loads
+    // so the dropdown doesn't flash empty / feel stuck on "loading".
+    retry: false,
+    refetchOnWindowFocus: false,
+    placeholderData: keepPreviousData,
   });
 
   return {

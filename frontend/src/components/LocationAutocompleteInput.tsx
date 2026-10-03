@@ -30,7 +30,7 @@ export default function LocationAutocompleteInput({
   const boxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { suggestions, isFetching, isActive } = useAutocomplete(value);
+  const { suggestions, isFetching, isActive, isError } = useAutocomplete(value ?? "");
 
   useEffect(() => {
     const onDown = (e: MouseEvent) => {
@@ -40,9 +40,18 @@ export default function LocationAutocompleteInput({
     return () => document.removeEventListener("mousedown", onDown);
   }, []);
 
+  // Reset highlight whenever the suggestion list changes so keyboard
+  // navigation never points at a stale index from the previous query.
+  useEffect(() => {
+    setHighlight(-1);
+  }, [suggestions]);
+
   const visible = open && isActive;
+  const trimmed = (value ?? "").trim();
   const showEmpty =
-    visible && !isFetching && value.trim().length >= AUTOCOMPLETE_MIN_CHARS && suggestions.length === 0;
+    visible && !isFetching && !isError && trimmed.length >= AUTOCOMPLETE_MIN_CHARS && suggestions.length === 0;
+  const showError =
+    visible && !isFetching && isError && trimmed.length >= AUTOCOMPLETE_MIN_CHARS;
 
   const select = (displayName: string) => {
     onChange(displayName);
@@ -58,7 +67,7 @@ export default function LocationAutocompleteInput({
         ref={inputRef}
         id={inputId}
         name={name}
-        value={value}
+        value={value ?? ""}
         placeholder={placeholder}
         onChange={(e) => {
           onChange(e.target.value);
@@ -66,7 +75,10 @@ export default function LocationAutocompleteInput({
           setOpen(true);
         }}
         onFocus={() => {
-          if (isActive && suggestions.length > 0) setOpen(true);
+          // Open for the active query even before results arrive so the
+          // user gets a loading indicator instead of a dead input; the
+          // previous list stays visible while the next query fetches.
+          if (isActive) setOpen(true);
         }}
         onBlur={() => {
           // delayed so a suggestion click registers before close
@@ -138,7 +150,12 @@ export default function LocationAutocompleteInput({
       )}
       {showEmpty && (
         <p className="absolute inset-x-0 top-full z-50 mt-1 rounded-md border border-border bg-card px-2.5 py-2 text-[12px] text-muted-foreground shadow-lg">
-          No matches — press Enter to keep “{value.trim()}”.
+          No matches — press Enter to keep “{trimmed}”.
+        </p>
+      )}
+      {showError && (
+        <p className="absolute inset-x-0 top-full z-50 mt-1 rounded-md border border-border bg-card px-2.5 py-2 text-[12px] text-muted-foreground shadow-lg">
+          Search unavailable — press Enter to keep “{trimmed}”.
         </p>
       )}
     </div>

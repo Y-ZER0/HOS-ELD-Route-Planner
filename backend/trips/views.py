@@ -7,7 +7,7 @@ from trips.models import Trip
 from trips.repositories.trip_repository import TripRepository
 from trips.serializers import to_contract_response
 from trips.services import geocode_service, trip_planner_service
-
+ 
 
 class PlanTripView(APIView):
     """POST /api/v1/trips/plan/ — plan + persist a trip.
@@ -78,7 +78,7 @@ class TripDetailView(APIView):
             return Response({"error": "Trip not found"}, status=status.HTTP_404_NOT_FOUND)
         return Response({"data": to_contract_response(trip)})
 
-
+ 
 class TripListView(APIView):
     """GET /api/v1/trips/ — recent trips (for share/reload)."""
 

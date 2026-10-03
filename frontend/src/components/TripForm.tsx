@@ -51,8 +51,10 @@ export default function TripForm() {
   });
 
   const cycle = watch("currentCycleHoursUsed");
-  const cycleNum = Number(cycle) || 0;
-  const remaining = Math.max(0, 70 - cycleNum);
+  const cycleNum = Number(cycle);
+  const cycleSafe = Number.isFinite(cycleNum) ? cycleNum : 0;
+  const remaining = 70 - cycleSafe;
+  const remainingViolation = remaining < 0;
   const currentLocation = watch("currentLocation");
   const pickupLocation = watch("pickupLocation");
   const dropOffLocation = watch("dropOffLocation");
@@ -125,14 +127,18 @@ export default function TripForm() {
             min={0}
             max={70}
             step={0.5}
-            value={cycleNum}
+            value={Number.isFinite(cycleNum) ? Math.min(70, Math.max(0, cycleNum)) : 0}
             onChange={(e) => setValue("currentCycleHoursUsed", Number(e.target.value), { shouldValidate: true })}
             className="h-1.5 w-full accent-cyan-400"
             aria-label="Current cycle hours used"
           />
           <div className="mt-1 flex justify-between text-[10px] text-muted-foreground tabular">
             <span>0 hr</span>
-            <span className="font-medium text-foreground">{remaining.toFixed(1)} hr remaining in cycle</span>
+            <span className={cn("font-medium", remainingViolation ? "text-destructive" : "text-foreground")}>
+              {remainingViolation
+                ? `Violation of HOS rules: ${remaining.toFixed(1)} hr over the 70-hr cycle`
+                : `${remaining.toFixed(1)} hr remaining in cycle`}
+            </span>
             <span>70 hr</span>
           </div>
           {errors.currentCycleHoursUsed?.message && (
@@ -141,8 +147,11 @@ export default function TripForm() {
           {/* progress bar */}
           <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary">
             <div
-              className={cn("h-full rounded-full transition-all", cycleNum > 60 ? "bg-red-400" : "bg-cyan-400")}
-              style={{ width: `${Math.min(100, (cycleNum / 70) * 100)}%` }}
+              className={cn(
+                "h-full rounded-full transition-all",
+                remainingViolation || cycleSafe > 60 ? "bg-red-400" : "bg-cyan-400",
+              )}
+              style={{ width: `${Math.min(100, Math.max(0, (cycleSafe / 70) * 100))}%` }}
             />
           </div>
         </div>

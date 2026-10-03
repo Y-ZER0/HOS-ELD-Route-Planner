@@ -73,9 +73,6 @@ export default function RouteMap() {
             {trip.routeFallback ? " · fallback geometry" : ""}
           </p>
         </div>
-        <span className="shrink-0 rounded-full border border-border bg-secondary px-2.5 py-1 text-[10px] font-medium text-secondary-foreground tabular">
-          {routePts.length} pts · {markers.length} stops
-        </span>
       </div>
 
       {/* map — isolated stacking context so Leaflet panes can't cover other panels */}

@@ -2,7 +2,7 @@ from django.db import transaction
 
 from trips.models import DailyEldLog, Driver, LogDutySegment, Trip, TripStop
 
-
+ 
 class TripRepository:
     @staticmethod
     def get_or_create_default_driver() -> Driver:

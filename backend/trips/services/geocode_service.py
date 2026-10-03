@@ -145,7 +145,8 @@ def clear_cache():
 
 def _nominatim_autocomplete_search(query: str, limit: int) -> list:
     """Multi-result Nominatim lookup for typeahead suggestions."""
-    timeout = min(settings.GEOCODE_TIMEOUT_S, 5.0)
+    # Short timeout: typeahead must fail fast (fallback covers offline).
+    timeout = min(settings.GEOCODE_TIMEOUT_S, 4.0)
     resp = requests.get(
         settings.NOMINATIM_BASE_URL,
         params={"q": query, "format": "json", "limit": limit, "addressdetails": 1},
@@ -182,8 +183,12 @@ def _fallback_suggestions(query: str, limit: int) -> list:
     """Substring match against the hardcoded FALLBACK dict (offline support)."""
     q = query.strip().lower()
     out = []
+    seen = set()
     for _key, f in FALLBACK.items():
         if q in _key or q in f["display"].lower():
+            if f["display"].lower() in seen:
+                continue
+            seen.add(f["display"].lower())
             out.append(
                 {
                     "displayName": f["display"],
@@ -202,8 +207,9 @@ def _fallback_suggestions(query: str, limit: int) -> list:
 def autocomplete(query: str, limit: int = 5) -> list:
     """Typeahead suggestions for a partial place string.
 
-    Pure UI helper — never raises. Returns [] when the query is too
-    short, Nominatim is unreachable, or nothing matches.
+    Pure UI helper — never raises. Offline fallback matches are always
+    merged first so partial input ("Chi" -> "Chicago, IL") resolves even
+    when Nominatim is slow, rate-limited, or returns nothing relevant.
     """
     q = (query or "").strip()
     try:
@@ -220,21 +226,27 @@ def autocomplete(query: str, limit: int = 5) -> list:
     if hit and hit[0] > now:
         return hit[1]
 
+    # Always-available offline matches (substring over known cities).
+    fallback = _fallback_suggestions(q, limit)
+
     try:
         data = _nominatim_autocomplete_search(q, limit)
-        results = []
+        results = list(fallback)
+        seen = {s["displayName"].lower() for s in results}
         for item in data:
             if not isinstance(item, dict):
                 continue
             s = _format_suggestion(item)
-            if s:
+            if s and s["displayName"].lower() not in seen:
+                seen.add(s["displayName"].lower())
                 results.append(s)
             if len(results) >= limit:
                 break
+        results = results[:limit]
         if len(_autocomplete_cache) >= AUTOCOMPLETE_MAX_ENTRIES:
             _autocomplete_cache.clear()
         _autocomplete_cache[cache_key] = (now + AUTOCOMPLETE_TTL_S, results)
         return results
     except Exception as exc:  # network down -> offline fallback, never 500
         logger.warning("Nominatim autocomplete failed for %r: %s", q, exc)
-        return _fallback_suggestions(q, limit)
+        return fallback
