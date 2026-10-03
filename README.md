@@ -87,6 +87,9 @@ The application is a decoupled full-stack system with a clean separation of conc
 
 ---
 
+### Database Schema
+<img width="1854" height="614" alt="HOS_ELD" src="https://github.com/user-attachments/assets/f69069f1-1ed1-4d6d-9978-b6e423a6de5a" />
+
 ## REST API Reference
 
 ### `POST /api/v1/trips/plan/`
