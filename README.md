@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/33001435/README.md)
 # Spotter — HOS & ELD Compliance Route Planner
 
 A full-stack logistics web application built with **Django (N-Layer Architecture)** and **React (TypeScript + Tailwind CSS v4)**. It automates long-haul trip planning while enforcing federal **FMCSA Hours of Service (HOS)** regulations and generates 24-hour **Electronic Logging Device (ELD)** daily log sheets.
