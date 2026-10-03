@@ -15,6 +15,7 @@ A full-stack logistics web application built with **Django (N-Layer Architecture
 - [System Architecture](#-system-architecture)
 - [REST API Reference](#-rest-api-reference)
 - [Local Development Setup](#-local-development-setup)
+- Database Configuration (Supabase)
 - [Deployment](#-deployment)
 - [Assessment Checklist](#-assessment-checklist)
 
@@ -58,7 +59,7 @@ The application is a decoupled full-stack system with a clean separation of conc
 ┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
 │ Controller Layer │        │  Service Layer   │        │ Repository Layer │
 │  (DRF APIViews)  │ ─────► │ (HOS Engine &    │ ─────► │   (Django ORM /  │
-│                  │        │  Route Services) │        │   PostgreSQL)    │
+│                  │        │  Route Services) │        │     Supabase)     │
 └──────────────────┘        └──────────────────┘        └──────────────────┘
 ```
 
@@ -72,6 +73,8 @@ The application is a decoupled full-stack system with a clean separation of conc
 | **Routing** | `route_service.py` | Queries the Open Source Routing Machine (OSRM) for road distance and polylines, with Haversine fallback |
 | **HOS Engine** | `hos_engine.py` | Pure Python domain logic: applies FMCSA rules and slices the trip timeline into 24-hour daily log grids |
 | **Repository** | `trip_repository.py` | Encapsulates ORM queries; atomic bulk inserts via `transaction.atomic()` |
+| **Database** | `Supabase PostgreSQL` | Cloud PostgreSQL instance managed via `dj-database-url` and `psycopg2-binary`|
+
 
 ### Frontend (React)
 
@@ -194,5 +197,7 @@ Frontend runs at: <http://localhost:5173>
 ### Backend — Render
 
 ### Frontend — Netlify  
+
+### Datbase - Supabase / Postgre
 
 
