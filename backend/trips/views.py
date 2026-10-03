@@ -102,3 +102,40 @@ class HealthView(APIView):
 
     def get(self, request):
         return Response({"status": "ok"})
+
+
+class LocationsAutocompleteView(APIView):
+    """GET /api/v1/locations/autocomplete/?q=Chic&limit=5 — UI typeahead helper.
+
+    Pure search-as-you-type proxy over Nominatim. Never 500s: transport
+    errors and empty results both yield 200 with {"data": []}.
+    """
+
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        q = request.query_params.get("q", "")
+        if q is None:
+            q = ""
+        q = str(q).strip()
+        if not q:
+            return Response(
+                {"error": "Missing 'q' query param."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(q) < geocode_service.AUTOCOMPLETE_MIN_CHARS:
+            return Response({"data": []})
+
+        limit_raw = request.query_params.get("limit", 5)
+        try:
+            limit = int(limit_raw)
+        except (TypeError, ValueError):
+            limit = 5
+        limit = max(1, min(10, limit))
+
+        try:
+            results = geocode_service.autocomplete(q, limit)
+        except Exception:  # defensive: autocomplete itself never raises, but be safe
+            results = []
+        return Response({"data": results})

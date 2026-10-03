@@ -6,6 +6,7 @@ import { DEFAULT_FORM_VALUES, tripSchema, type TripFormData } from "@/schemas/tr
 import { formatApiError, usePlanTrip } from "@/api/client";
 import { useAppStore } from "@/stores/useAppStore";
 import { cn } from "@/lib/cn";
+import LocationAutocompleteInput from "@/components/LocationAutocompleteInput";
 
 function Field({
   label,
@@ -52,6 +53,9 @@ export default function TripForm() {
   const cycle = watch("currentCycleHoursUsed");
   const cycleNum = Number(cycle) || 0;
   const remaining = Math.max(0, 70 - cycleNum);
+  const currentLocation = watch("currentLocation");
+  const pickupLocation = watch("pickupLocation");
+  const dropOffLocation = watch("dropOffLocation");
 
   // Keep slider + number input in sync-friendly way
   useEffect(() => {
@@ -75,13 +79,28 @@ export default function TripForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <Field label="Current Location" icon={<Navigation size={12} />} error={errors.currentLocation?.message}>
-          <input {...register("currentLocation")} className={inputCls} placeholder="Chicago, IL" />
+          <LocationAutocompleteInput
+            value={currentLocation}
+            placeholder="Chicago, IL"
+            inputClassName={inputCls}
+            onChange={(v) => setValue("currentLocation", v, { shouldValidate: true, shouldDirty: true })}
+          />
         </Field>
         <Field label="Pickup Location" icon={<MapPin size={12} />} error={errors.pickupLocation?.message}>
-          <input {...register("pickupLocation")} className={inputCls} placeholder="Atlanta, GA" />
+          <LocationAutocompleteInput
+            value={pickupLocation}
+            placeholder="Atlanta, GA"
+            inputClassName={inputCls}
+            onChange={(v) => setValue("pickupLocation", v, { shouldValidate: true, shouldDirty: true })}
+          />
         </Field>
         <Field label="Drop-off Location" icon={<Flag size={12} />} error={errors.dropOffLocation?.message}>
-          <input {...register("dropOffLocation")} className={inputCls} placeholder="Dallas, TX" />
+          <LocationAutocompleteInput
+            value={dropOffLocation}
+            placeholder="Dallas, TX"
+            inputClassName={inputCls}
+            onChange={(v) => setValue("dropOffLocation", v, { shouldValidate: true, shouldDirty: true })}
+          />
         </Field>
 
         <div>

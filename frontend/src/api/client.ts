@@ -21,10 +21,28 @@ export interface PlanPayload {
   currentCycleHoursUsed: number;
 }
 
+export interface LocationSuggestion {
+  displayName: string;
+  name: string;
+  lat: number;
+  lng: number;
+  type?: string;
+  address?: Record<string, unknown>;
+}
+
+async function fetchAutocomplete(query: string, limit = 5): Promise<LocationSuggestion[]> {
+  const res = await api.get<{ data: LocationSuggestion[] }>("/locations/autocomplete/", {
+    params: { q: query, limit },
+  });
+  return Array.isArray(res.data?.data) ? res.data.data : [];
+}
+
 async function postPlan(payload: PlanPayload): Promise<PlanResponseData> {
   const res = await api.post<{ data: PlanResponseData }>("/trips/plan/", payload);
   return res.data.data;
 }
+
+export { fetchAutocomplete };
 
 export function usePlanTrip() {
   const setActiveTrip = useAppStore((s) => s.setActiveTrip);

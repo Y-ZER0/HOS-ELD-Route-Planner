@@ -1,6 +1,7 @@
 """Free-text city -> (lat, lng) via Nominatim with in-memory cache + fallback."""
 
 import logging
+import time
 
 import requests
 from django.conf import settings
@@ -42,6 +43,14 @@ FALLBACK = {
 
 class GeocodeError(ValueError):
     pass
+
+
+AUTOCOMPLETE_MIN_CHARS = 3
+AUTOCOMPLETE_TTL_S = 3600
+AUTOCOMPLETE_MAX_ENTRIES = 200
+
+# query key -> (expires_at, results)
+_autocomplete_cache: dict[str, tuple[float, list]] = {}
 
 
 def _nominatim_search(query: str) -> list:
@@ -131,3 +140,101 @@ def geocode(query: str) -> dict:
 
 def clear_cache():
     _cache.clear()
+    _autocomplete_cache.clear()
+
+
+def _nominatim_autocomplete_search(query: str, limit: int) -> list:
+    """Multi-result Nominatim lookup for typeahead suggestions."""
+    timeout = min(settings.GEOCODE_TIMEOUT_S, 5.0)
+    resp = requests.get(
+        settings.NOMINATIM_BASE_URL,
+        params={"q": query, "format": "json", "limit": limit, "addressdetails": 1},
+        headers={"User-Agent": settings.NOMINATIM_USER_AGENT},
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return data if isinstance(data, list) else []
+
+
+def _format_suggestion(item: dict) -> dict | None:
+    """Normalize one Nominatim result. Returns None when unusable."""
+    try:
+        display = str(item.get("display_name") or item.get("name") or "").strip()
+        lat = float(item.get("lat"))
+        lng = float(item.get("lon", item.get("lng")))
+    except (TypeError, ValueError):
+        return None
+    if not display or not (-90 <= lat <= 90 and -180 <= lng <= 180):
+        return None
+    address = item.get("address") if isinstance(item.get("address"), dict) else {}
+    return {
+        "displayName": display,
+        "name": display,
+        "lat": lat,
+        "lng": lng,
+        "type": item.get("type") or item.get("class") or "",
+        "address": address,
+    }
+
+
+def _fallback_suggestions(query: str, limit: int) -> list:
+    """Substring match against the hardcoded FALLBACK dict (offline support)."""
+    q = query.strip().lower()
+    out = []
+    for _key, f in FALLBACK.items():
+        if q in _key or q in f["display"].lower():
+            out.append(
+                {
+                    "displayName": f["display"],
+                    "name": f["display"],
+                    "lat": f["lat"],
+                    "lng": f["lng"],
+                    "type": "fallback",
+                    "address": {},
+                }
+            )
+            if len(out) >= limit:
+                break
+    return out
+
+
+def autocomplete(query: str, limit: int = 5) -> list:
+    """Typeahead suggestions for a partial place string.
+
+    Pure UI helper — never raises. Returns [] when the query is too
+    short, Nominatim is unreachable, or nothing matches.
+    """
+    q = (query or "").strip()
+    try:
+        limit = int(limit)
+    except (TypeError, ValueError):
+        limit = 5
+    limit = max(1, min(10, limit))
+    if len(q) < AUTOCOMPLETE_MIN_CHARS:
+        return []
+
+    cache_key = f"{q.lower()}|{limit}"
+    now = time.time()
+    hit = _autocomplete_cache.get(cache_key)
+    if hit and hit[0] > now:
+        return hit[1]
+
+    try:
+        data = _nominatim_autocomplete_search(q, limit)
+        results = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+            s = _format_suggestion(item)
+            if s:
+                results.append(s)
+            if len(results) >= limit:
+                break
+        if len(_autocomplete_cache) >= AUTOCOMPLETE_MAX_ENTRIES:
+            _autocomplete_cache.clear()
+        _autocomplete_cache[cache_key] = (now + AUTOCOMPLETE_TTL_S, results)
+        return results
+    except Exception as exc:  # network down -> offline fallback, never 500
+        logger.warning("Nominatim autocomplete failed for %r: %s", q, exc)
+        return _fallback_suggestions(q, limit)
