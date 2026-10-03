@@ -16,9 +16,13 @@ export default function Header() {
   return (
     <header className="no-print flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-card px-4">
       <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-lg font-bold text-primary-foreground">
-          S
-        </div>
+        <img
+          src="/spotter-logo.svg"
+          alt="Spotter logo"
+          className="h-8 w-8 shrink-0 rounded-md"
+          width={32}
+          height={32}
+        />
         <div className="min-w-0">
           <h1 className="truncate text-sm font-semibold leading-tight text-foreground">
             Spotter HOS &amp; Route Compliance Planner

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Spotter logo">
+  <title>Spotter</title>
+  <defs>
+    <linearGradient id="spotter-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B8EC2"/>
+      <stop offset="1" stop-color="#30BEE8"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#spotter-bg)"/>
+  <rect x="1" y="1" width="62" height="62" rx="13" fill="none" stroke="#ffffff" stroke-opacity="0.28"/>
+  <ellipse cx="32" cy="13.5" rx="22" ry="5" fill="#ffffff" opacity="0.14"/>
+  <path d="M45 24C41 19.5 36.5 17.5 31.5 17.5C24 17.5 19 21.5 19 26.5C19 38 45 32.5 45 42.5C45 47 40.5 50 34 50C29.5 50 25.5 48.5 22.5 45.5"
+    fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M45 24C41 19.5 36.5 17.5 31.5 17.5C24 17.5 19 21.5 19 26.5C19 38 45 32.5 45 42.5C45 47 40.5 50 34 50C29.5 50 25.5 48.5 22.5 45.5"
+    fill="none" stroke="#0B7EA9" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="3 2.6" opacity="0.55"/>
+  <circle cx="45" cy="24" r="4.2" fill="#ffffff"/>
+  <circle cx="45" cy="24" r="1.7" fill="#0C8BBD"/>
+  <circle cx="22.5" cy="45.5" r="4.2" fill="#ffffff"/>
+  <circle cx="22.5" cy="45.5" r="1.7" fill="#0C8BBD"/>
+</svg>
