@@ -5,7 +5,6 @@ A full-stack logistics web application built with **Django (N-Layer Architecture
 | | |
 |---|---|
 | **Live App** | `https://spotter-hos-planner.netlify.app/` |
-| **Demo Video** | `<your-loom-url>` |
 
 ---
 
