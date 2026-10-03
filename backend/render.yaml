@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: spotter-hos-backend
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput
+    startCommand: gunicorn core.wsgi
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "0"
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: spotter-hos-db
+          property: connectionString
+databases:
+  - name: spotter-hos-db
+    plan: free

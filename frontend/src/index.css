@@ -1,0 +1,222 @@
+@import "tailwindcss" source(none);
+@source "../src";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-navy: var(--navy);
+  --color-navy-foreground: var(--navy-foreground);
+  --color-navy-muted: var(--navy-muted);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-teal: var(--teal);
+  --color-duty-off: var(--duty-off);
+  --color-duty-sleeper: var(--duty-sleeper);
+  --color-duty-driving: var(--duty-driving);
+  --color-duty-onduty: var(--duty-onduty);
+  --color-grid-line: var(--grid-line);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.984 0.003 247.858);
+  --foreground: oklch(0.21 0.04 265.7);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.04 265.7);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.04 265.7);
+  --primary: oklch(0.66 0.14 218);
+  --primary-foreground: oklch(0.145 0.04 265);
+  --secondary: oklch(0.968 0.007 247.9);
+  --secondary-foreground: oklch(0.28 0.04 265);
+  --muted: oklch(0.968 0.007 247.9);
+  --muted-foreground: oklch(0.55 0.046 257.4);
+  --accent: oklch(0.94 0.03 213);
+  --accent-foreground: oklch(0.28 0.05 240);
+  --destructive: oklch(0.577 0.245 27.3);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.917 0.014 255.5);
+  --input: oklch(0.917 0.014 255.5);
+  --ring: oklch(0.66 0.14 218);
+
+  --navy: oklch(0.21 0.045 264);
+  --navy-foreground: oklch(0.97 0.006 248);
+  --navy-muted: oklch(0.63 0.035 256);
+  --brand: oklch(0.68 0.145 220);
+  --brand-foreground: oklch(0.16 0.03 260);
+  --teal: oklch(0.7 0.12 178);
+
+  --duty-off: oklch(0.55 0.035 257);
+  --duty-sleeper: oklch(0.6 0.19 279);
+  --duty-driving: oklch(0.7 0.16 162);
+  --duty-onduty: oklch(0.77 0.16 74);
+  --grid-line: oklch(0.9 0.014 255);
+}
+
+.dark {
+  --background: oklch(0.18 0.04 264);
+  --foreground: oklch(0.97 0.006 248);
+  --card: oklch(0.235 0.042 264);
+  --card-foreground: oklch(0.97 0.006 248);
+  --popover: oklch(0.235 0.042 264);
+  --popover-foreground: oklch(0.97 0.006 248);
+  --primary: oklch(0.7 0.14 219);
+  --primary-foreground: oklch(0.16 0.03 260);
+  --secondary: oklch(0.29 0.04 260);
+  --secondary-foreground: oklch(0.97 0.006 248);
+  --muted: oklch(0.29 0.04 260);
+  --muted-foreground: oklch(0.7 0.035 257);
+  --accent: oklch(0.32 0.05 235);
+  --accent-foreground: oklch(0.95 0.01 248);
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.7 0.14 219);
+
+  --navy: oklch(0.155 0.035 264);
+  --navy-foreground: oklch(0.97 0.006 248);
+  --navy-muted: oklch(0.68 0.03 256);
+  --brand: oklch(0.72 0.14 220);
+  --teal: oklch(0.74 0.12 178);
+
+  --duty-off: oklch(0.65 0.03 257);
+  --duty-sleeper: oklch(0.67 0.17 279);
+  --duty-driving: oklch(0.74 0.15 162);
+  --duty-onduty: oklch(0.8 0.15 74);
+  --grid-line: oklch(1 0 0 / 14%);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility panel {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 2px oklch(0.21 0.04 265 / 0.05);
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- app-specific ---- */
+/* thin scrollbars like mock */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: oklch(1 0 0 / 14%);
+  border-radius: 8px;
+}
+
+/* print: only ELD sheets */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only-logs {
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .eld-page {
+    break-inside: avoid;
+    border: 1px solid #999;
+  }
+}
+
+/* ---- Leaflet containment ---- */
+/* Keep Leaflet's high internal z-indexes (panes 400, controls 1000)
+   inside the map frame so they can never cover sibling panels. */
+.leaflet-container {
+  font-family: var(--font-sans);
+  outline: none;
+  background: #e5e7eb;
+}
+/* Soften bright OSM tiles slightly in dark mode so the map sits well in the dark UI */
+.dark .leaflet-tile {
+  filter: brightness(0.88) saturate(0.92);
+}
+.spotter-dot-marker {
+  background: transparent;
+  border: none;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+.leaflet-popup-content {
+  margin: 10px 12px;
+  line-height: 1.4;
+}
+
+/* ---- ELD hover popup animation ---- */
+.eld-pop {
+  transform: translate(-50%, -100%);
+  animation: eld-pop-in 180ms ease-out;
+}
+@keyframes eld-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% + 8px)) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eld-pop {
+    animation: none;
+  }
+}
