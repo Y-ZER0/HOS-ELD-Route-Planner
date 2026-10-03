@@ -5,10 +5,8 @@ A full-stack logistics web application built with **Django (N-Layer Architecture
 
 | | |
 |---|---|
-| **Live App** | `<your-netlify-or-vercel-url>` |
-| **API** | `https://<your-backend-app>.onrender.com/api/v1/` |
+| **Live App** | `https://spotter-hos-planner.netlify.app/` |
 | **Demo Video** | `<your-loom-url>` |
-| **Repository** | `<your-github-url>` |
 
 ---
 
@@ -196,45 +194,6 @@ Frontend runs at: <http://localhost:5173>
 
 ### Backend — Render
 
-1. Create a new **Web Service** connected to your GitHub repo (root directory: `backend`).
-2. **Build Command:**
-   ```bash
-   pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
-   ```
-3. **Start Command:**
-   ```bash
-   gunicorn core.wsgi:application
-   ```
-4. **Environment Variables:**
+### Frontend — Netlify  
 
-   | Variable | Value |
-   |---|---|
-   | `DEBUG` | `False` |
-   | `ALLOWED_HOSTS` | `.onrender.com` |
-   | `SECRET_KEY` | `<your-production-secret>` |
 
-### Frontend — Netlify or Vercel
-
-1. Connect the GitHub repo (root directory: `frontend`).
-2. **Build Command:** `npm run build`
-3. **Output Directory:** `dist`
-4. **Environment Variable:**
-
-   | Variable | Value |
-   |---|---|
-   | `VITE_API_BASE_URL` | `https://<your-backend-app>.onrender.com/api/v1` |
-
----
-
-## 📋 Assessment Checklist
-
-| Requirement | Implementation |
-|---|---|
-| Inputs (current location, pickup, drop-off, cycle hours) | React Hook Form + Zod validation, with synced interactive slider |
-| Route map output | Leaflet vector map with polyline geometry and stop markers |
-| FMCSA daily log sheets | SVG 24-hour grid across 4 duty statuses |
-| Multi-day trip support | Timeline sliced per 24-hour calendar day, with tabbed views |
-| 70hr/8day & HOS rule enforcement | 11h driving, 14h window, 30m breaks, 10h resets, 1,000mi fuel stops |
-| UI/UX | Modern SaaS design, OKLCH palettes, dark mode, responsive cards |
-| Live hosted version | Netlify/Vercel (frontend) + Render (backend) — see links above |
-| Loom video demo | 3–5 minute walkthrough — see link above |
