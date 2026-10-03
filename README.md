@@ -20,7 +20,7 @@ A full-stack logistics web application built with **Django (N-Layer Architecture
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 - **Intelligent Route Planning** — Calculates distance, driving duration, and route polylines connecting the origin, pickup, and drop-off locations.
 - **Automated FMCSA Safety Engine**
@@ -84,7 +84,7 @@ The application is a decoupled full-stack system with a clean separation of conc
 
 ---
 
-## 🚦 REST API Reference
+## REST API Reference
 
 ### `POST /api/v1/trips/plan/`
 
@@ -189,7 +189,7 @@ Frontend runs at: <http://localhost:5173>
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend — Render
 
