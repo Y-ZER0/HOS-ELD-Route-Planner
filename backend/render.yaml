@@ -2,7 +2,7 @@ services:
   - type: web
     name: spotter-hos-backend
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
     startCommand: gunicorn core.wsgi
     envVars:
       - key: SECRET_KEY
