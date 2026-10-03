@@ -58,7 +58,7 @@ The application is a decoupled full-stack system with a clean separation of conc
 ┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
 │ Controller Layer │        │  Service Layer   │        │ Repository Layer │
 │  (DRF APIViews)  │ ─────► │ (HOS Engine &    │ ─────► │   (Django ORM /  │
-│                  │        │  Route Services) │        │     Supabase)     │
+│                  │        │  Route Services) │        │     Supabase)    │
 └──────────────────┘        └──────────────────┘        └──────────────────┘
 ```
 
